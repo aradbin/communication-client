@@ -29,8 +29,21 @@ export class AccountService {
     return url;
   }
 
-  findAll() {
-    return `This action returns all account`;
+  async findAll() {
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        'X-API-KEY': process.env.UNIPILE_API_KEY
+      }
+    };
+    
+    const accounts = await fetch(`${process.env.UNIPILE_BASE_URL}/accounts`, options)
+      .then(response => response.json())
+      .then(response => response)
+      .catch(err => console.error(err));
+
+    return accounts;
   }
 
   findOne(id: number) {

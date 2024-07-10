@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { CreateWhatsappDto } from './dto/create-whatsapp.dto';
 import { UpdateWhatsappDto } from './dto/update-whatsapp.dto';
+import { Response } from 'express';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -9,30 +10,17 @@ export class WhatsappController {
 
   @Post()
   async create(@Body() createWhatsappDto: any) {
-    // console.log('start')
-    // await fetch('https://api2.unipile.com:13214/api/v1/chats', {
-    //   method: 'GET',
-    //   headers: {
-    //     accept: 'application/json',
-    //     'X-API-KEY': 'wFwfk/cP.ccLHavfhlifHp25s9DEHK/51sQRJl2mUu15Wxy/j0Nc='
-    //   }
-    // }).then(response => response.json())
-    //   .then(response => console.log(response))
-    //   .catch(err => console.error(err));
-
-    // console.log('end')
-
-    // return this.whatsappService.create(createWhatsappDto);
+    return await this.whatsappService.create(createWhatsappDto);
   }
 
   @Get()
-  findAll() {
-    return this.whatsappService.findAll();
+  async findAll() {
+    return await this.whatsappService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.whatsappService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.whatsappService.findOne(id);
   }
 
   @Patch(':id')
@@ -43,5 +31,17 @@ export class WhatsappController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.whatsappService.remove(+id);
+  }
+
+  @Get(':id/attachment/:attachmentId')
+  async getAttachment(@Param('id') id: string, @Param('attachmentId') attachmentId: string, @Res() res: Response) {
+    const response = await this.whatsappService.getAttachment(id, attachmentId);
+    if(response.headers.get('Content-Type').startsWith('image')) {
+      const data = await response.blob();
+      res.send(data);
+    }else{
+      const data = await response.json(); 
+      res.send(data);
+    }
   }
 }
