@@ -8,8 +8,20 @@ export class WhatsappController {
   constructor(private readonly whatsappService: WhatsappService) {}
 
   @Post()
-  create(@Body() createWhatsappDto: any) {
-    console.log(createWhatsappDto)
+  async create(@Body() createWhatsappDto: any) {
+    // console.log('start')
+    // await fetch('https://api2.unipile.com:13214/api/v1/chats', {
+    //   method: 'GET',
+    //   headers: {
+    //     accept: 'application/json',
+    //     'X-API-KEY': 'wFwfk/cP.ccLHavfhlifHp25s9DEHK/51sQRJl2mUu15Wxy/j0Nc='
+    //   }
+    // }).then(response => response.json())
+    //   .then(response => console.log(response))
+    //   .catch(err => console.error(err));
+
+    // console.log('end')
+
     // return this.whatsappService.create(createWhatsappDto);
   }
 
