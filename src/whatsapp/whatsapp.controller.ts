@@ -15,8 +15,8 @@ export class WhatsappController {
   }
 
   @Get()
-  async findAll() {
-    return await this.whatsappService.findAll();
+  async findAll(@Query() query: any) {
+    return await this.whatsappService.findAll(query);
   }
 
   @Get(':id')
@@ -32,17 +32,5 @@ export class WhatsappController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.whatsappService.remove(+id);
-  }
-
-  @Get(':id/attachment/:attachmentId')
-  async getAttachment(@Param('id') id: string, @Param('attachmentId') attachmentId: string, @Res() res: Response) {
-    const response = await this.whatsappService.getAttachment(id, attachmentId);
-    if(response.headers.get('Content-Type').startsWith('image')) {
-      const data = await response.blob();
-      res.send(data);
-    }else{
-      const data = await response.json(); 
-      res.send(data);
-    }
   }
 }

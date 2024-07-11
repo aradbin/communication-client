@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { UpdateWhatsappDto } from './dto/update-whatsapp.dto';
 import { AccountService } from 'src/account/account.service';
 import { RequestService } from 'src/request/request.service';
@@ -11,28 +11,48 @@ export class WhatsappService {
   ) {}
 
   async create(createWhatsappDto: any) {
-    const response = await this.requestService.create({
-      url: `/chats/${createWhatsappDto?.conversation_id}/messages`,
-      body: {
-        text: createWhatsappDto?.text,
-      }
-    });
+    const accounts = await this.accountService.findAll();
+    const whatsapp = accounts?.items?.find((account: any) => (account?.type === 'WHATSAPP' && account?.name === createWhatsappDto?.sender_number));
+    if(!whatsapp) {
+      throw new UnprocessableEntityException('Account not found');
+    }
+
+    const response = !createWhatsappDto?.conversation_id ?
+      await this.requestService.create({
+        url: `/chats`,
+        body: {
+          attendees_ids: `${createWhatsappDto?.recipient_number}@s.whatsapp.net`,
+          account_id: whatsapp?.id,
+          text: createWhatsappDto?.text,
+        }
+      })
+    :
+      await this.requestService.create({
+        url: `/chats/${createWhatsappDto?.conversation_id}/messages`,
+        body: {
+          text: createWhatsappDto?.text,
+        }
+      });
 
     return response;
   }
 
-  async findAll() {
+  async findAll(query: any) {
+    if(!query?.account){
+      return {}
+    }
+
     const accounts = await this.accountService.findAll();
-    const whatsapp = accounts?.items?.find(account => account?.type === 'WHATSAPP');
+    const whatsapp = accounts?.items?.find((account: any) => (account?.type === 'WHATSAPP' && account?.name === query?.account));
     if(!whatsapp) {
-      return [];
+      return {};
     }
 
     const response = await this.requestService.get({
       url: `/chats?account_type=WHATSAPP&account_id=${whatsapp?.id}`
     })
 
-    return response?.items || [];
+    return response
   }
 
   async findOne(id: any) {
@@ -49,17 +69,5 @@ export class WhatsappService {
 
   remove(id: number) {
     return `This action removes a #${id} whatsapp`;
-  }
-
-  async getAttachment(id: string, attachmentId: string) {
-    const options = {
-      method: 'GET',
-      headers: {
-        // accept: 'application/json',
-        'X-API-KEY': process.env.UNIPILE_API_KEY
-      }
-    };
-    
-    return await fetch(`${process.env.UNIPILE_BASE_URL}/messages/${id}/attachments/${attachmentId}`, options)
   }
 }
