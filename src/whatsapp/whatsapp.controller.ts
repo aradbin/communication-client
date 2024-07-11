@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Query } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { UpdateWhatsappDto } from './dto/update-whatsapp.dto';
 import { Response } from 'express';
 
 @Controller('whatsapp')
 export class WhatsappController {
-  constructor(private readonly whatsappService: WhatsappService) {}
+  constructor(
+    private readonly whatsappService: WhatsappService
+  ) {}
 
   @Post()
   async create(@Body() createWhatsappDto: any) {

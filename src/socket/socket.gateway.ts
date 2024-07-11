@@ -22,9 +22,13 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('whatsapp')
-  async handleWhatsApp(@MessageBody() data: any) {
+  async sendWhatsApp(@MessageBody() data: any) {
     const response = await this.whatsappService.create(data);
 
     return response;
+  }
+
+  async receiveWhatsApp(payload: any) {
+    this.server.emit('whatsapp', payload);
   }
 }
