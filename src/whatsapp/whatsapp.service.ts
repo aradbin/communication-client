@@ -14,7 +14,7 @@ export class WhatsappService {
     const response = await this.requestService.create({
       url: `/chats/${createWhatsappDto?.conversation_id}/messages`,
       body: {
-        text: createWhatsappDto?.msg_body,
+        text: createWhatsappDto?.text,
       }
     });
 

@@ -8,5 +8,6 @@ import { RequestModule } from 'src/request/request.module';
   imports: [RequestModule, AccountModule],
   controllers: [WhatsappController],
   providers: [WhatsappService],
+  exports: [WhatsappService],
 })
 export class WhatsappModule {}
