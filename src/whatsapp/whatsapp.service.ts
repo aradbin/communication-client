@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateWhatsappDto } from './dto/create-whatsapp.dto';
 import { UpdateWhatsappDto } from './dto/update-whatsapp.dto';
 import { AccountService } from 'src/account/account.service';
+import { RequestService } from 'src/request/request.service';
 
 @Injectable()
 export class WhatsappService {
   constructor(
     private accountService: AccountService,
-) {}
+    private requestService: RequestService
+  ) {}
 
   async create(createWhatsappDto: CreateWhatsappDto) {
     
@@ -20,37 +22,19 @@ export class WhatsappService {
       return [];
     }
 
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        'X-API-KEY': process.env.UNIPILE_API_KEY
-      }
-    };
-    
-    const chats = await fetch(`${process.env.UNIPILE_BASE_URL}/chats?account_type=WHATSAPP&account_id=${whatsapp?.id}`, options)
-      .then(response => response.json())
-      .then(response => response?.items || [])
-      .catch(err => console.error(err));
+    const response = await this.requestService.get({
+      url: `/chats?account_type=WHATSAPP&account_id=${whatsapp?.id}`
+    })
 
-    return chats;
+    return response?.items || [];
   }
 
   async findOne(id: any) {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        'X-API-KEY': process.env.UNIPILE_API_KEY
-      }
-    };
-    
-    const messages = await fetch(`${process.env.UNIPILE_BASE_URL}/chats/${id}/messages`, options)
-      .then(response => response.json())
-      .then(response => response)
-      .catch(err => console.error(err));
+    const response = await this.requestService.get({
+      url: `/chats/${id}/messages`
+    })
 
-    return messages;
+    return response;
   }
 
   update(id: number, updateWhatsappDto: UpdateWhatsappDto) {

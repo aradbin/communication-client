@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
 import { AccountModule } from './account/account.module';
+import { RequestModule } from './request/request.module';
 
 @Module({
-  imports: [EmailModule, WhatsappModule, AccountModule],
+  imports: [EmailModule, WhatsappModule, AccountModule, RequestModule],
   controllers: [AppController],
   providers: [AppService],
 })
