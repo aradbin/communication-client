@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
@@ -14,13 +14,18 @@ export class EmailController {
   }
 
   @Get()
-  findAll() {
-    return this.emailService.findAll();
+  async findAll(@Query() query: any) {
+    return await this.emailService.findAll(query);
+  }
+
+  @Get('/folders')
+  async folders(@Query() query: any) {
+    return await this.emailService.folders(query);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.emailService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.emailService.findOne(id);
   }
 
   @Patch(':id')
