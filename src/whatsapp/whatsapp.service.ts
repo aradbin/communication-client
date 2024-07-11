@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWhatsappDto } from './dto/create-whatsapp.dto';
 import { UpdateWhatsappDto } from './dto/update-whatsapp.dto';
 import { AccountService } from 'src/account/account.service';
 import { RequestService } from 'src/request/request.service';
@@ -11,8 +10,15 @@ export class WhatsappService {
     private requestService: RequestService
   ) {}
 
-  async create(createWhatsappDto: CreateWhatsappDto) {
-    
+  async create(createWhatsappDto: any) {
+    const response = await this.requestService.create({
+      url: `/chats/${createWhatsappDto?.conversation_id}/messages`,
+      body: {
+        text: createWhatsappDto?.msg_body,
+      }
+    });
+
+    return response;
   }
 
   async findAll() {
