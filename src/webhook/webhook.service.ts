@@ -9,8 +9,8 @@ export class WebhookService {
     private socketGateway: SocketGateway
   ) {}
   
-  async webhook(payload: any) {
-    await this.socketGateway.receiveWhatsApp(payload);
-    return payload;
+  async webhook(type: string, payload: any) {
+    await this.socketGateway.receive(type, payload);
+    return true;
   }
 }

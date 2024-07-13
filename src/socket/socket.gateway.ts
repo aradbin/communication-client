@@ -28,7 +28,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return response;
   }
 
-  async receiveWhatsApp(payload: any) {
-    this.server.emit('whatsapp', payload);
+  async receive(type: string, payload: any) {
+    this.server.emit(type, payload);
   }
 }

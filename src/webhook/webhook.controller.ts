@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { WebhookService } from './webhook.service';
-import { CreateWebhookDto } from './dto/create-webhook.dto';
-import { UpdateWebhookDto } from './dto/update-webhook.dto';
 
 @Controller('webhook')
 export class WebhookController {
@@ -9,7 +7,11 @@ export class WebhookController {
 
   @Post('whatsapp')
   async whatsapp(@Body() payload: any) {
-    console.log('payload',payload)
-    return await this.webhookService.webhook(payload);
+    return await this.webhookService.webhook('whatsapp', payload);
+  }
+
+  @Post('email')
+  async email(@Body() payload: any) {
+    return await this.webhookService.webhook('email', payload);
   }
 }

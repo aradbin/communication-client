@@ -10,8 +10,40 @@ export class EmailService {
     private accountService: AccountService,
     private requestService: RequestService
   ) {}
-  create(createEmailDto: CreateEmailDto) {
-    return 'This action adds a new email';
+  async create(createEmailDto: any) {
+    if(!createEmailDto?.account){
+      return {}
+    }
+
+    const accounts = await this.accountService.findAll();
+    const email = accounts?.items?.find((account: any) => (account?.name === createEmailDto?.account));
+    if(!email) {
+      return {};
+    }
+
+    const formData = {
+      account_id: email?.id,
+      subject: createEmailDto?.subject,
+      body: createEmailDto?.text,
+      to: [
+        {
+          "identifier": createEmailDto?.toEmail
+        }
+      ]
+    }
+
+    if(createEmailDto?.reply_to){
+      formData['reply_to'] = createEmailDto?.reply_to;
+    }
+
+    const response = await this.requestService.create({
+      url: '/emails',
+      body: formData
+    })
+
+    console.log(response)
+
+    return response
   }
 
   async findAll(query: any) {
@@ -26,7 +58,7 @@ export class EmailService {
     }
 
     const response = await this.requestService.get({
-      url: `/emails?account_id=${email?.id}&folder=${query?.folder}&role=${query?.role}${query?.any_email ? `&any_email=${query?.any_email}` : ``}&include_headers=true&limit=10`
+      url: `/emails?account_id=${email?.id}&folder=${query?.folder}&role=${query?.role}${query?.any_email ? `&any_email=${query?.any_email}` : ``}&limit=${query?.pageSize || 10}${query?.cursor ? `&cursor=${query?.cursor}` : ''}`
     })
 
     return response
