@@ -48,8 +48,15 @@ export class WhatsappService {
       return {};
     }
 
+    const payload = {
+      account_id: whatsapp?.id,
+      limit: query?.pageSize || 100,
+    }
+
+    const param = new URLSearchParams(payload).toString()
+
     const response = await this.requestService.get({
-      url: `/chats?account_type=WHATSAPP&account_id=${whatsapp?.id}`
+      url: `/chats?${param}`
     })
 
     return response

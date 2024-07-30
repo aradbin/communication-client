@@ -57,8 +57,31 @@ export class EmailService {
       return {};
     }
 
+    const payload = {
+      account_id: email?.id,
+      limit: query?.pageSize || 10,
+    }
+
+    if(query?.folder){
+      payload['folder'] = query?.folder
+    }
+
+    if(query?.role){
+      payload['role'] = query?.role
+    }
+
+    if(query?.any_email){
+      payload['any_email'] = query?.any_email 
+    }
+
+    if(query?.cursor){
+      payload['cursor'] = query?.cursor
+    }
+
+    const param = new URLSearchParams(payload).toString()
+
     const response = await this.requestService.get({
-      url: `/emails?account_id=${email?.id}&folder=${query?.folder}&role=${query?.role}${query?.any_email ? `&any_email=${query?.any_email}` : ``}&limit=${query?.pageSize || 10}${query?.cursor ? `&cursor=${query?.cursor}` : ''}`
+      url: `/emails?${param}`
     })
 
     return response
